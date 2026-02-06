@@ -20,7 +20,8 @@ public class HR {
     @NotBlank(message = "Password is required")
     @Size(min = 4, max = 20, message = "Password must be between 4 and 20 characters")
     private String password;
-
+    
     @Enumerated(EnumType.STRING)
-    private EmployeeStatus status;
+    private Role role = Role.ROLE_HR;
+
 }

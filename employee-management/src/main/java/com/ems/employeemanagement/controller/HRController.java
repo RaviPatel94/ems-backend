@@ -37,7 +37,7 @@ public class HRController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody HR hr) {
         HR hrUser = hrService.login(hr.getEmail(), hr.getPassword());
-        String token = jwtUtil.generateToken(hrUser.getEmail(), hrUser.getId());
+        String token = jwtUtil.generateToken(hrUser.getEmail(), hrUser.getId(),hr.getRole().name());
 
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
@@ -75,9 +75,9 @@ public class HRController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/employees/{hrId}")
-    public ResponseEntity<List<Employee>> getEmployees(@PathVariable Long hrId) {
-        List<Employee> employees = hrService.getEmployeesByHR(hrId);
+    @GetMapping("/employees")
+    public ResponseEntity<List<Employee>> getEmployees() {
+        List<Employee> employees = hrService.getEmployeesByHR();
         return ResponseEntity.ok(employees);
     }
 
@@ -107,5 +107,14 @@ public class HRController {
     public ResponseEntity<List<LeaveRequest>> getAllLeaves() {
         List<LeaveRequest> leaves = hrService.getAllLeaves();
         return ResponseEntity.ok(leaves);
+    }
+    
+    @DeleteMapping("/delete/{empId}")
+    public ResponseEntity<Map<String, Object>> deleteEmployee(@PathVariable Long empId){
+    	Employee emp = hrService.deleteEmployee(empId);
+    	Map<String, Object> response = new HashMap<>();
+    	response.put("empId", empId);
+    	response.put("message", "Employee deleted sucessfully");
+    	return ResponseEntity.ok(response);
     }
 }

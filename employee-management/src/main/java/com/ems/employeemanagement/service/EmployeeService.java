@@ -16,7 +16,14 @@ public class EmployeeService {
         this.empRepo = empRepo;
         this.leaveRepo = leaveRepo;
     }
-
+    
+    public Employee getEmployee(Long empId) {
+        if (!empRepo.existsById(empId)) {
+            throw new RuntimeException("Employee not found with id: " + empId);
+        }
+        return empRepo.findById(empId).get();
+    }
+    
     public Employee login(String email, String password) {
         Employee emp = empRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid email"));

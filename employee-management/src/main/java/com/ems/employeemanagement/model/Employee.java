@@ -35,4 +35,8 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "hr_id")
     private HR hr;
+    
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.ROLE_EMPLOYEE;
+
 }

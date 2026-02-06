@@ -23,7 +23,6 @@ public class HRService {
         if (hrRepo.existsByEmail(hr.getEmail())) {
             throw new RuntimeException("Email already registered");
         }
-        hr.setStatus(EmployeeStatus.AVAILABLE);
         return hrRepo.save(hr);
     }
 
@@ -56,15 +55,8 @@ public class HRService {
         return empRepo.save(emp);
     }
 
-    public List<Employee> getEmployeesByHR(Long hrId) {
-        if (!hrRepo.existsById(hrId)) {
-            throw new RuntimeException("HR not found with id: " + hrId);
-        }
-        List<Employee> employees = empRepo.findByHrId(hrId);
-        if (employees.isEmpty()) {
-            throw new RuntimeException("No employees found for HR id: " + hrId);
-        }
-        return employees;
+    public List<Employee> getEmployeesByHR() {
+        return empRepo.findAll();
     }
 
     public LeaveRequest approveLeave(Long leaveId) {
@@ -84,5 +76,12 @@ public class HRService {
     public List<LeaveRequest> getAllLeaves() {
         List<LeaveRequest> leaves = leaveRepo.findAll();
         return leaves;
+    }
+    
+    public Employee deleteEmployee(Long empId) {
+    	Employee emp = empRepo.findById(empId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + empId));
+    	empRepo.deleteById(empId);
+    	return emp;
     }
 }

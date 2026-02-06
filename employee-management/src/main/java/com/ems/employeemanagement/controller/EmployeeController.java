@@ -27,7 +27,7 @@ public class EmployeeController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Employee emp) {
         Employee employee = empService.login(emp.getEmail(), emp.getPassword());
-        String token = jwtUtil.generateToken(employee.getEmail(), employee.getId());
+        String token = jwtUtil.generateToken(employee.getEmail(), employee.getId(), emp.getRole().name());
 
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
@@ -56,5 +56,17 @@ public class EmployeeController {
     public ResponseEntity<List<LeaveRequest>> history(@PathVariable Long empId) {
         List<LeaveRequest> leaves = empService.getLeaveHistory(empId);
         return ResponseEntity.ok(leaves);
+    }
+    
+    @GetMapping("/{Id}")
+    public ResponseEntity<Map<String, Object>> getEmployee(@PathVariable Long Id){
+    	Employee employee = empService.getEmployee(Id);
+    	Map<String, Object> response = new HashMap<>();
+    	response.put("Id", Id);
+    	response.put("Name", employee.getName());
+    	response.put("Email", employee.getEmail());
+    	response.put("Status", employee.getStatus());
+    	response.put("Department", employee.getDepartment());
+    	return ResponseEntity.ok(response);
     }
 }
