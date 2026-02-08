@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 
@@ -24,6 +25,8 @@ public class Employee {
     private String email;
 
     @NotBlank(message = "password is required")
+    @Column(length = 100)
+    @Size(min = 4, message = "Password must be between 4 and 20 characters")
     private String password;
 
     @NotBlank(message = "department is required")

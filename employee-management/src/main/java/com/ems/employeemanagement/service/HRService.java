@@ -2,6 +2,9 @@ package com.ems.employeemanagement.service;
 
 import com.ems.employeemanagement.model.*;
 import com.ems.employeemanagement.repository.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +15,9 @@ public class HRService {
     private final HRRepository hrRepo;
     private final EmployeeRepository empRepo;
     private final LeaveRepository leaveRepo;
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     public HRService(HRRepository hrRepo, EmployeeRepository empRepo, LeaveRepository leaveRepo) {
         this.hrRepo = hrRepo;
         this.empRepo = empRepo;
@@ -23,14 +28,15 @@ public class HRService {
         if (hrRepo.existsByEmail(hr.getEmail())) {
             throw new RuntimeException("Email already registered");
         }
+        hr.setPassword(passwordEncoder.encode(hr.getPassword()));
         return hrRepo.save(hr);
     }
 
     public HR login(String email, String password) {
         HR hr = hrRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Email doesn't exist"));
-        if (!hr.getPassword().equals(password)) {
-            throw new RuntimeException("Incorrect Password");
+        if (!passwordEncoder.matches(password, hr.getPassword())) {
+            throw new RuntimeException("Invalid password");
         }
         return hr;
     }
@@ -42,7 +48,7 @@ public class HRService {
 
         HR hr = hrRepo.findById(hrId)
                 .orElseThrow(() -> new RuntimeException("HR not found with id: " + hrId));
-
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         employee.setStatus(EmployeeStatus.AVAILABLE);
         employee.setHr(hr);
         return empRepo.save(employee);

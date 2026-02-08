@@ -18,7 +18,8 @@ public class HR {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 4, max = 20, message = "Password must be between 4 and 20 characters")
+    @Column(length = 100)
+    @Size(min = 4, message = "Password must be between 4 and 20 characters")
     private String password;
     
     @Enumerated(EnumType.STRING)

@@ -2,6 +2,9 @@ package com.ems.employeemanagement.service;
 
 import com.ems.employeemanagement.model.*;
 import com.ems.employeemanagement.repository.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +14,8 @@ public class EmployeeService {
 
     private final EmployeeRepository empRepo;
     private final LeaveRepository leaveRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public EmployeeService(EmployeeRepository empRepo, LeaveRepository leaveRepo) {
         this.empRepo = empRepo;
@@ -27,9 +32,11 @@ public class EmployeeService {
     public Employee login(String email, String password) {
         Employee emp = empRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid email"));
-        if (!emp.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid credentials");
+        if (!passwordEncoder.matches(password, emp.getPassword())) {
+            throw new RuntimeException("Invalid password");
         }
+
+        
         return emp;
     }
 
